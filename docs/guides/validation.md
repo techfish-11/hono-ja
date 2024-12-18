@@ -1,95 +1,97 @@
-# Validation
+# 検証
 
-Hono provides only a very thin Validator.
-But, it can be powerful when combined with a third-party Validator.
-In addition, the RPC feature allows you to share API specifications with your clients through types.
+Hono は非常に薄い検証機能のみを提供します。
 
-## Manual validator
+ただし、サードパーティの検証機能と組み合わせると強力になります。
 
-First, introduce a way to validate incoming values without using the third-party Validator.
+さらに、RPC 機能を使用すると、型を通じて API 仕様をクライアントと共有できます。
 
-Import `validator` from `hono/validator`.
+## 手動検証機能
+
+まず、サードパーティの検証機能を使用せずに、受信した値を検証する方法を紹介します。
+
+`hono/validator` から `validator` をインポートします。
 
 ```ts
 import { validator } from 'hono/validator'
 ```
 
-To validate form data, specify `form` as the first argument and a callback as the second argument.
-In the callback, validates the value and return the validated values at the end.
-The `validator` can be used as middleware.
+フォーム データを検証するには、最初の引数として `form` を指定し、2 番目の引数としてコールバックを指定します。
+
+コールバックでは、値を検証し、最後に検証された値を返します。
+
+`validator` はミドルウェアとして使用できます。
 
 ```ts
 app.post(
-  '/posts',
-  validator('form', (value, c) => {
-    const body = value['body']
-    if (!body || typeof body !== 'string') {
-      return c.text('Invalid!', 400)
-    }
-    return {
-      body: body,
-    }
-  }),
-  //...
+'/posts',
+validator('form', (value, c) => {
+const body = value['body']
+if (!body || typeof body !== 'string') {
+return c.text('Invalid!', 400)
+}
+return {
+body: body,
+}
+}),
+//...
 ```
 
-Within the handler you can get the validated value with `c.req.valid('form')`.
+ハンドラー内では、`c.req.valid('form')` を使用して検証済みの値を取得できます。
 
 ```ts
 , (c) => {
-  const { body } = c.req.valid('form')
-  // ... do something
-  return c.json(
-    {
-      message: 'Created!',
-    },
-    201
-  )
+const { body } = c.req.valid('form')
+// ... 何かを実行します
+return c.json(
+{
+message: 'Created!',
+},
+201
+)
 }
 ```
 
-Validation targets include `json`, `query`, `header`, `param` and `cookie` in addition to `form`.
+検証対象には、`json`、`query`、`header`、`param` などがあります。 `form` に加えて `cookie` も必要です。
 
-::: warning
-When you validate `json`, the request _must_ contain a `Content-Type: application/json` header
-otherwise the request body will not be parsed and you will receive a warning.
+::: 警告
+`json` を検証する場合、リクエストには `Content-Type: application/json` ヘッダーが含まれている必要があります。含まれていない場合、リクエスト本文は解析されず、警告が表示されます。
 
-It is important to set the `content-type` header when testing using
-[`app.request()`](../api/request.md).
+[`app.request()`](../api/request.md) を使用してテストする場合は、`content-type` ヘッダーを設定することが重要です。
 
-Given an application like this.
+次のようなアプリケーションがあるとします。
 
 ```ts
 const app = new Hono()
 app.post(
-  '/testing',
-  validator('json', (value, c) => {
-    // pass-through validator
-    return value
-  }),
-  (c) => {
-    const body = c.req.valid('json')
-    return c.json(body)
-  }
+'/testing',
+validator('json', (value, c) => {
+// パススルー検証
+戻り値
+}),
+(c) => {
+const body = c.req.valid('json')
+return c.json(body)
+}
 )
 ```
 
-Your tests can be written like this.
+テストは次のように記述できます。
 
 ```ts
-// ❌ this will not work
+// ❌ これは動作しません
 const res = await app.request('/testing', {
-  method: 'POST',
-  body: JSON.stringify({ key: 'value' }),
+method: 'POST',
+body: JSON.stringify({ key: 'value' }),
 })
 const data = await res.json()
 console.log(data) // undefined
 
-// ✅ this will work
+// ✅ これは動作します
 const res = await app.request('/testing', {
-  method: 'POST',
-  body: JSON.stringify({ key: 'value' }),
-  headers: new Headers({ 'Content-Type': 'application/json' }),
+method: 'POST',
+body: JSON.stringify({ key: 'value' }),
+headers: new Headers({ 'Content-Type': 'application/json' }),
 })
 const data = await res.json()
 console.log(data) // { key: 'value' }
@@ -97,77 +99,78 @@ console.log(data) // { key: 'value' }
 
 :::
 
-::: warning
-When you validate `header`, you need to use **lowercase** name as the key.
+::: 警告
+`header` を検証する場合、**小文字** の名前を使用する必要があります。キー。
 
-If you want to validate the `Idempotency-Key` header, you need to use `idempotency-key` as the key.
+`Idempotency-Key` ヘッダーを検証する場合は、キーとして `idempotency-key` を使用する必要があります。
 
 ```ts
-// ❌ this will not work
+// ❌ これは動作しません
 app.post(
-  '/api',
-  validator('header', (value, c) => {
-    // idempotencyKey is always undefined
-    // so this middleware always return 400 as not expected
-    const idempotencyKey = value['Idempotency-Key']
+'/api',
+validator('header', (value, c) => {
+// idempotencyKey は常に undefined です
+// そのため、このミドルウェアは予想外に常に 400 を返します
+const idempotencyKey = value['Idempotency-Key']
 
-    if (idempotencyKey == undefined || idempotencyKey === '') {
-      throw HTTPException(400, {
-        message: 'Idempotency-Key is required',
-      })
-    }
-    return { idempotencyKey }
-  }),
-  (c) => {
-    const { idempotencyKey } = c.req.valid('header')
-    // ...
-  }
+if (idempotencyKey == undefined || idempotencyKey === '') {
+throw HTTPException(400, {
+message: 'Idempotency-Key is required',
+})
+}
+return { idempotencyKey }
+}),
+(c) => {
+const { idempotencyKey } = c.req.valid('header')
+// ...
+}
 )
 
-// ✅ this will work
+// ✅ これは動作します
 app.post(
-  '/api',
-  validator('header', (value, c) => {
-    // can retrieve the value of the header as expected
-    const idempotencyKey = value['idempotency-key']
+'/api',
+validator('header', (value, c) => {
+// 期待どおりにヘッダーの値を取得できます
+const idempotencyKey = value['idempotency-key']
 
-    if (idempotencyKey == undefined || idempotencyKey === '') {
-      throw HTTPException(400, {
-        message: 'Idempotency-Key is required',
-      })
-    }
-    return { idempotencyKey }
-  }),
-  (c) => {
-    const { idempotencyKey } = c.req.valid('header')
-    // ...
-  }
+if (idempotencyKey == undefined || idempotencyKey === '') {
+throw HTTPException(400, {
+message: 'Idempotency-Key is required',
+})
+}
+return { idempotencyKey }
+}),
+(c) => {
+const { idempotencyKey } = c.req.valid('header')
+// ...
+}
 )
 ```
 
 :::
 
-## Multiple validators
+## 複数のバリデータ
 
-You can also include multiple validators to validate different parts of request:
+リクエストのさまざまな部分を検証するために、複数のバリデータを含めることもできます:
 
 ```ts
 app.post(
-  '/posts/:id',
-  validator('param', ...),
-  validator('query', ...),
-  validator('json', ...),
-  (c) => {
-    //...
-  }
+'/posts/:id',
+validator('param', ...),
+validator('query', ...),
+validator('json', ...),
+(c) => {
+//...
+}
 ```
 
-## With Zod
+## Zod を使用する場合
 
-You can use [Zod](https://zod.dev), one of third-party validators.
-We recommend using a third-party validator.
+サードパーティのバリデーターの 1 つである [Zod](https://zod.dev) を使用できます。
 
-Install from the Npm registry.
+サードパーティのバリデーターを使用することをお勧めします。
+
+Npm レジストリからインストールします。
 
 ::: code-group
 
@@ -189,50 +192,50 @@ bun add zod
 
 :::
 
-Import `z` from `zod`.
+`zod` から `z` をインポートします。
 
 ```ts
 import { z } from 'zod'
 ```
 
-Write your schema.
+スキーマを記述します。
 
 ```ts
 const schema = z.object({
-  body: z.string(),
+body: z.string(),
 })
 ```
 
-You can use the schema in the callback function for validation and return the validated value.
+コールバック関数でスキーマを使用して検証し、検証された値を返すことができます。
 
 ```ts
 const route = app.post(
-  '/posts',
-  validator('form', (value, c) => {
-    const parsed = schema.safeParse(value)
-    if (!parsed.success) {
-      return c.text('Invalid!', 401)
-    }
-    return parsed.data
-  }),
-  (c) => {
-    const { body } = c.req.valid('form')
-    // ... do something
-    return c.json(
-      {
-        message: 'Created!',
-      },
-      201
-    )
-  }
+'/posts',
+validator('form', (value, c) => {
+const parsed = schema.safeParse(value)
+if (!parsed.success) {
+return c.text('Invalid!', 401)
+}
+return parsed.data
+}),
+(c) => {
+const { body } = c.req.valid('form')
+// ... 何かする
+return c.json(
+{
+message: 'Created!',
+},
+201
+)
+}
 )
 ```
 
-## Zod Validator Middleware
+## Zod Validator ミドルウェア
 
-You can use the [Zod Validator Middleware](https://github.com/honojs/middleware/tree/main/packages/zod-validator) to make it even easier.
+[Zod Validator ミドルウェア](https://github.com/honojs/middleware/tree/main/packages/zod-validator) を使用すると、さらに簡単になります。
 
-::: code-group
+::: コード グループ
 
 ```sh [npm]
 npm i @hono/zod-validator
@@ -252,26 +255,26 @@ bun add @hono/zod-validator
 
 :::
 
-And import `zValidator`.
+`zValidator` をインポートします。
 
 ```ts
 import { zValidator } from '@hono/zod-validator'
 ```
 
-And write as follows.
+次のように記述します。
 
 ```ts
 const route = app.post(
-  '/posts',
-  zValidator(
-    'form',
-    z.object({
-      body: z.string(),
-    })
-  ),
-  (c) => {
-    const validated = c.req.valid('form')
-    // ... use your validated data
-  }
+'/posts',
+zValidator(
+'form',
+z.object({
+body: z.string(),
+})
+),
+(c) => {
+const validated = c.req.valid('form')
+// ... 検証済みのデータを使用します
+}
 )
 ```

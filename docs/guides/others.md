@@ -1,26 +1,26 @@
-# Miscellaneous
+# その他
 
-## Contributing
+## 貢献
 
-Contributions Welcome! You can contribute in the following ways.
+貢献を歓迎します。次の方法で貢献できます。
 
-- Create an Issue - Propose a new feature. Report a bug.
-- Pull Request - Fix a bug and typo. Refactor the code.
-- Create third-party middleware - Instruct below.
-- Share - Share your thoughts on the Blog, X(Twitter), and others.
-- Make your application - Please try to use Hono.
+- 問題の作成 - 新機能の提案。バグの報告。
+- プルリクエスト - バグとタイプミスの修正。コードのリファクタリング。
+- サードパーティミドルウェアの作成 - 以下に指示します。
+- 共有 - ブログ、X(Twitter) などでご意見を共有します。
+- アプリケーションの作成 - Hono をぜひ使ってみてください。
 
-For more details, see [Contribution Guide](https://github.com/honojs/hono/blob/main/docs/CONTRIBUTING.md).
+詳細については、[貢献ガイド](https://github.com/honojs/hono/blob/main/docs/CONTRIBUTING.md) を参照してください。
 
-## Sponsoring
+## スポンサー
 
-You can sponsor Hono authors via the GitHub sponsor program.
+GitHub スポンサー プログラムを通じて Hono の作者をスポンサーできます。
 
-- [Sponsor @yusukebe on GitHub Sponsors](https://github.com/sponsors/yusukebe)
-- [Sponsor @usualoma on GitHub Sponsors](https://github.com/sponsors/usualoma)
+- [GitHub スポンサーで @yusukebe をスポンサー](https://github.com/sponsors/yusukebe)
+- [GitHub スポンサーで @usualoma をスポンサー](https://github.com/sponsors/usualoma)
 
-## Other Resources
+## その他のリソース
 
-- GitHub repository: <a href="https://github.com/honojs">https://github.com/honojs</a>
-- npm registry: <a href="https://www.npmjs.com/package/hono">https://www.npmjs.com/package/hono</a>
+- GitHub リポジトリ: <a href="https://github.com/honojs">https://github.com/honojs</a>
+- npm レジストリ: <a href="https://www.npmjs.com/package/hono">https://www.npmjs.com/package/hono</a>
 - JSR: <a href="https://jsr.io/@hono/hono">https://jsr.io/@hono/hono</a>

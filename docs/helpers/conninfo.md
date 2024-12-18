@@ -1,8 +1,8 @@
-# ConnInfo Helper
+# ConnInfo ヘルパー
 
-The ConnInfo Helper helps you to get the connection information. For example, you can get the client's remote address easily.
+ConnInfo ヘルパーは接続情報を取得するのに役立ちます。たとえば、クライアントのリモート アドレスを簡単に取得できます。
 
-## Import
+## インポート
 
 ::: code-group
 
@@ -38,58 +38,58 @@ import { getConnInfo } from '@hono/node-server/conninfo'
 
 :::
 
-## Usage
+## 使用方法
 
 ```ts
 const app = new Hono()
 
 app.get('/', (c) => {
-  const info = getConnInfo(c) // info is `ConnInfo`
-  return c.text(`Your remote address is ${info.remote.address}`)
+const info = getConnInfo(c) // info is `ConnInfo`
+return c.text(`Your remote address is ${info.remote.address}`)
 })
 ```
 
-## Type Definitions
+## 型定義
 
-The type definitions of the values that you can get from `getConnInfo()` are the following:
+`getConnInfo()` から取得できる値の型定義は次のとおりです:
 
 ```ts
-type AddressType = 'IPv6' | 'IPv4' | undefined
+type AddressType = 'IPv6' | 'IPv4' |未定義
 
 type NetAddrInfo = {
-  /**
-   * Transport protocol type
-   */
-  transport?: 'tcp' | 'udp'
-  /**
-   * Transport port number
-   */
-  port?: number
+/**
+* トランスポート プロトコル タイプ
+*/
+transport?: 'tcp' | 'udp'
+/**
+* トランスポート ポート番号
+*/
+port?: number
 
-  address?: string
-  addressType?: AddressType
+address?: string
+addressType?: AddressType
 } & (
-  | {
-      /**
-       * Host name such as IP Addr
-       */
-      address: string
+| {
+/**
+* IP Addr などのホスト名
+*/
+address: string
 
-      /**
-       * Host name type
-       */
-      addressType: AddressType
-    }
-  | {}
+/**
+* ホスト名 タイプ
+*/
+addressType: AddressType
+}
+| {}
 )
 
 /**
- * HTTP Connection information
- */
+* HTTP 接続情報
+*/
 interface ConnInfo {
-  /**
-   * Remote information
-   */
-  remote: NetAddrInfo
+/**
+* リモート情報
+*/
+remote: NetAddrInfo
 }
 ```

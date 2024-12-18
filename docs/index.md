@@ -68,23 +68,23 @@ Hono は Express に似たフロントエンドを持たないWebアプリケー
 - ライブラリのベースサーバー
 - フルスタックアプリケーション
 
-## 誰が Hono を使っていますか?
+### 誰が Hono を使っていますか？
 
-| Project                                                            | Platform           | What for?                                                                               |
-| ------------------------------------------------------------------ | ------------------ | --------------------------------------------------------------------------------------- |
-| [cdnjs](https://cdnjs.com)                                         | Cloudflare Workers | A free and open-source CDN service. _Hono is used for the api server_.                  |
-| [Cloudflare D1](https://www.cloudflare.com/developer-platform/d1/) | Cloudflare Workers | Serverless SQL databases. _Hono is used for the internal api server_.                   |
-| [BaseAI](https://baseai.dev)                                       | Local AI Server    | Serverless AI agent pipes with memory. An open-source agentic AI framework for web. _API server with Hono_. |
-| [Unkey](https://unkey.dev)                                         | Cloudflare Workers | An open-source API authentication and authorization. _Hono is used for the api server_. |
-| [OpenStatus](https://openstatus.dev)                               | Bun                | An open-source website & API monitoring platform. _Hono is used for the api server_.    |
-| [Deno Benchmarks](https://deno.com/benchmarks)                     | Deno               | A secure TypeScript runtime built on V8. _Hono is used for benchmarking_.               |
+| プロジェクト                                                      | プラットフォーム       | 用途                                                                                   |
+| ---------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------- |
+| [cdnjs](https://cdnjs.com)                                       | Cloudflare Workers | 無料のオープンソースCDNサービス。_Hono は API サーバーとして使用されています。_           |
+| [Cloudflare D1](https://www.cloudflare.com/developer-platform/d1/) | Cloudflare Workers | サーバーレスSQLデータベース。_Hono は内部 API サーバーとして使用されています。_          |
+| [BaseAI](https://baseai.dev)                                     | ローカルAIサーバー    | メモリを持つサーバーレスAIエージェントパイプライン。オープンソースのエージェントAIフレームワーク。_Hono は API サーバーとして使用されています。_ |
+| [Unkey](https://unkey.dev)                                       | Cloudflare Workers | オープンソースのAPI認証と認可サービス。_Hono は API サーバーとして使用されています。_    |
+| [OpenStatus](https://openstatus.dev)                             | Bun                 | オープンソースのウェブサイト＆API監視プラットフォーム。_Hono は API サーバーとして使用されています。_ |
+| [Deno Benchmarks](https://deno.com/benchmarks)                   | Deno                | V8上に構築されたセキュアなTypeScriptランタイム。_Hono はベンチマークテストに使用されています。_ |
 
-そして、
+さらに：
 
-- [Drivly](https://driv.ly/) - Cloudflare Workers
-- [repeat.dev](https://repeat.dev/) - Cloudflare Workers
+- [Drivly](https://driv.ly/) - Cloudflare Workers  
+- [repeat.dev](https://repeat.dev/) - Cloudflare Workers  
 
-Do you want to see more? See [Who is using Hono in production?](https://github.com/orgs/honojs/discussions/1510).
+その他の事例を確認したい場合は、[Who is using Hono in production?](https://github.com/orgs/honojs/discussions/1510) をご覧ください。
 
 ## Hono 1分クッキング
 

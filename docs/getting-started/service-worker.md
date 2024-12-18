@@ -1,47 +1,47 @@
 # Service Worker
 
-[Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) is a script that runs in the background of the browser to handle tasks like caching and push notifications. Using a Service Worker adapter, you can run applications made with Hono as [FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent) handler within the browser.
+[Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) は、キャッシュやプッシュ通知などのタスクを処理するためにブラウザのバックグラウンドで実行されるスクリプトです。Service Worker アダプターを使用すると、Hono で作成されたアプリケーションをブラウザ内で [FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent) ハンドラーとして実行できます。
 
-This page shows an example of creating a project using [Vite](https://vitejs.dev/).
+このページでは、[Vite](https://vitejs.dev/) を使用してプロジェクトを作成する例を示します。
 
-## 1. Setup
+## 1. セットアップ
 
-First, create and move to your project directory:
+まず、プロジェクト ディレクトリを作成してそこに移動します:
 
 ```sh
 mkdir my-app
 cd my-app
 ```
 
-Create the necessary files for the project. Make a `package.json` file with the following:
+プロジェクトに必要なファイルを作成します。以下の内容で `package.json` ファイルを作成します:
 
 ```json
 {
-  "name": "my-app",
-  "private": true,
-  "scripts": {
-    "dev": "vite dev"
-  },
-  "type": "module"
+"name": "my-app",
+"private": true,
+"scripts": {
+"dev": "vite dev"
+},
+"type": "module"
 }
 ```
 
-Similarly, create a `tsconfig.json` file with the following:
+同様に、以下の内容で `tsconfig.json` ファイルを作成します:
 
 ```json
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM", "WebWorker"],
-    "moduleResolution": "bundler"
-  },
-  "include": ["./"],
-  "exclude": ["node_modules"]
+"compilerOptions": {
+"target": "ES2020",
+"module": "ESNext",
+"lib": ["ES2020", "DOM", "WebWorker"],
+"moduleResolution": "bundler"
+},
+"include": ["./"],
+"exclude": ["node_modules"]
 }
 ```
 
-Next, install the necessary modules.
+次に、必要なモジュールをインストールします。
 
 ::: code-group
 
@@ -69,51 +69,51 @@ bun add -D vite
 
 ## 2. Hello World
 
-Edit `index.html`:
+`index.html` を編集します:
 
 ```html
 <!doctype html>
 <html>
-  <body>
-    <a href="/sw">Hello World by Service Worker</a>
-    <script type="module" src="/main.ts"></script>
-  </body>
+<body>
+<a href="/sw">Hello World by Service Worker</a>
+<script type="module" src="/main.ts"></script>
+</body>
 </html>
 ```
 
-`main.ts` is a script to register the Service Worker:
+`main.ts` は、Service を登録するためのスクリプトですワーカー:
 
 ```ts
 function register() {
-  navigator.serviceWorker
-    .register('/sw.ts', { scope: '/sw', type: 'module' })
-    .then(
-      function (_registration) {
-        console.log('Register Service Worker: Success')
-      },
-      function (_error) {
-        console.log('Register Service Worker: Error')
-      }
-    )
+navigator.serviceWorker
+.register('/sw.ts', { scope: '/sw', type: 'module' })
+.then(
+function (_registration) {
+console.log('Service Worker の登録: 成功')
+},
+function (_error) {
+console.log('Service Worker の登録: エラー')
+}
+)
 }
 function start() {
-  navigator.serviceWorker
-    .getRegistrations()
-    .then(function (registrations) {
-      for (const registration of registrations) {
-        console.log('Unregister Service Worker')
-        registration.unregister()
-      }
-      register()
-    })
+navigator.serviceWorker
+.getRegistrations()
+.then(function (registrations) {
+for (const registration of registrations) {
+console.log('Service Worker の登録解除')
+registration.unregister()
+}
+register()
+})
 }
 start()
 ```
 
-In `sw.ts`, create an application using Hono and register it to the `fetch` event with the Service Worker adapter’s `handle` function. This allows the Hono application to intercept access to `/sw`.
+`sw.ts` で、Hono を使用してアプリケーションを作成し、Service Worker アダプターの `fetch` イベントに登録します。 `handle` 関数。これにより、Hono アプリケーションは `/sw` へのアクセスを傍受できます。
 
 ```ts
-// To support types
+// 型をサポートするには
 // https://github.com/microsoft/TypeScript/issues/14877
 declare const self: ServiceWorkerGlobalScope
 
@@ -126,9 +126,9 @@ app.get('/', (c) => c.text('Hello World'))
 self.addEventListener('fetch', handle(app))
 ```
 
-## 3. Run
+## 3. 実行
 
-Start the development server.
+開発サーバーを起動します。
 
 ::: code-group
 
@@ -150,4 +150,4 @@ bun run dev
 
 :::
 
-By default, the development server will run on port `5173`. Access `http://localhost:5173/` in your browser to complete the Service Worker registration. Then, access `/sw` to see the response from the Hono application.
+デフォルトでは、開発サーバーはポート `5173` で実行されます。ブラウザで `http://localhost:5173/` にアクセスして、Service Worker の登録を完了します。次に、`/sw` にアクセスして、Hono アプリケーションからの応答を確認します。

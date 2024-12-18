@@ -1,49 +1,49 @@
 # Azure Functions
 
-[Azure Functions](https://azure.microsoft.com/en-us/products/functions) is a serverless platform from Microsoft Azure. You can run your code in response to events, and it automatically manages the underlying compute resources for you.
+[Azure Functions](https://azure.microsoft.com/en-us/products/functions) は、Microsoft Azure のサーバーレス プラットフォームです。イベントに応じてコードを実行でき、基盤となるコンピューティング リソースが自動的に管理されます。
 
-Hono was not designed for Azure Functions at first. But with [Azure Functions Adapter](https://github.com/Marplex/hono-azurefunc-adapter) it can run on it as well.
+Hono は当初、Azure Functions 用に設計されていませんでした。ただし、[Azure Functions アダプター](https://github.com/Marplex/hono-azurefunc-adapter) を使用すると、Azure Functions でも実行できます。
 
-It works with Azure Functions **V4** running on Node.js 18 or above.
+Node.js 18 以降で実行される Azure Functions **V4** で動作します。
 
-## 1. Install CLI
+## 1. CLI をインストールする
 
-To create an Azure Function, you must first install [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-typescript?pivots=nodejs-model-v4#install-the-azure-functions-core-tools).
+Azure Functions を作成するには、まず [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-typescript?pivots=nodejs-model-v4#install-the-azure-functions-core-tools) をインストールする必要があります。
 
-On macOS
+macOS の場合
 
 ```sh
 brew tap azure/functions
 brew install azure-functions-core-tools@4
 ```
 
-Follow this link for other OS:
+他の OS の場合は、このリンクに従ってください:
 
-- [Install the Azure Functions Core Tools | Microsoft Learn](https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-typescript?pivots=nodejs-model-v4#install-the-azure-functions-core-tools)
+- [Azure Functions Core Tools をインストールする | Microsoft Learn](https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-typescript?pivots=nodejs-model-v4#install-the-azure-functions-core-tools)
 
-## 2. Setup
+## 2. セットアップ
 
-Create a TypeScript Node.js V4 project in the current folder.
+現在のフォルダーに TypeScript Node.js V4 プロジェクトを作成します。
 
 ```sh
 func init --typescript
 ```
 
-Change the default route prefix of the host. Add this property to the root json object of `host.json`:
+ホストの既定のルート プレフィックスを変更します。このプロパティを `host.json` のルート json オブジェクトに追加します:
 
 ```json
 "extensions": {
-    "http": {
-        "routePrefix": ""
-    }
+"http": {
+"routePrefix": ""
+}
 }
 ```
 
 ::: info
-The default Azure Functions route prefix is `/api`. If you don't change it as shown above, be sure to start all your Hono routes with `/api`
+Azure Functions のデフォルトのルート プレフィックスは `/api` です。上記のように変更しない場合は、すべての Hono ルートを `/api` で開始するようにしてください
 :::
 
-Now you are ready to install Hono and the Azure Functions Adapter with:
+これで、次のコマンドを使用して Hono と Azure Functions アダプターをインストールする準備が整いました:
 
 ::: code-group
 
@@ -67,7 +67,7 @@ bun add @marplex/hono-azurefunc-adapter hono
 
 ## 3. Hello World
 
-Create `src/app.ts`:
+`src/app.ts` を作成します:
 
 ```ts
 // src/app.ts
@@ -79,7 +79,7 @@ app.get('/', (c) => c.text('Hello Azure Functions!'))
 export default app
 ```
 
-Create `src/functions/httpTrigger.ts`:
+`src/functions/httpTrigger.ts` を作成します:
 
 ```ts
 // src/functions/httpTrigger.ts
@@ -88,22 +88,22 @@ import { azureHonoHandler } from '@marplex/hono-azurefunc-adapter'
 import honoApp from '../app'
 
 app.http('httpTrigger', {
-  methods: [
-    //Add all your supported HTTP methods here
-    'GET',
-    'POST',
-    'DELETE',
-    'PUT',
-  ],
-  authLevel: 'anonymous',
-  route: '{*proxy}',
-  handler: azureHonoHandler(honoApp.fetch),
+methods: [
+// サポートされているすべての HTTP メソッドをここに追加します
+'GET',
+'POST',
+'DELETE',
+'PUT',
+],
+authLevel: 'anonymous',
+route: '{*proxy}',
+handler: azureHonoHandler(honoApp.fetch),
 })
 ```
 
-## 4. Run
+## 4. 実行
 
-Run the development server locally. Then, access `http://localhost:7071` in your Web browser.
+開発サーバーをローカルで実行します。次に、Web ブラウザーで `http://localhost:7071` にアクセスします。
 
 ::: code-group
 
@@ -125,13 +125,13 @@ bun run start
 
 :::
 
-## 5. Deploy
+## 5. デプロイ
 
 ::: info
-Before you can deploy to Azure, you need to create some resources in your cloud infrastructure. Please visit the Microsoft documentation on [Create supporting Azure resources for your function](https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-typescript?pivots=nodejs-model-v4&tabs=windows%2Cazure-cli%2Cbrowser#create-supporting-azure-resources-for-your-function)
+Azure にデプロイする前に、クラウド インフラストラクチャにいくつかのリソースを作成する必要があります。 [関数をサポートする Azure リソースを作成する](https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-typescript?pivots=nodejs-model-v4&tabs=windows%2Cazure-cli%2Cbrowser#create-supporting-azure-resources-for-your-function) に関する Microsoft ドキュメントをご覧ください。
 :::
 
-Build the project for deployment:
+デプロイ用にプロジェクトをビルドします:
 
 ::: code-group
 
@@ -153,8 +153,8 @@ bun run build
 
 :::
 
-Deploy your project to the function app in Azure Cloud. Replace `<YourFunctionAppName>` with the name of your app.
+Azure Cloud の関数アプリにプロジェクトをデプロイします。`<YourFunctionAppName>` をアプリの名前に置き換えます。
 
 ```sh
-func azure functionapp publish <YourFunctionAppName>
+func azure functionapp publish <関数アプリ名>
 ```

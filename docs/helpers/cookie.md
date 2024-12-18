@@ -1,56 +1,56 @@
-# Cookie Helper
+# Cookie ヘルパー
 
-The Cookie Helper provides an easy interface to manage cookies, enabling developers to set, parse, and delete cookies seamlessly.
+Cookie ヘルパーは、Cookie を管理するための簡単なインターフェイスを提供し、開発者がシームレスに Cookie を設定、解析、削除できるようにします。
 
-## Import
+## インポート
 
 ```ts
 import { Hono } from 'hono'
 import {
-  getCookie,
-  getSignedCookie,
-  setCookie,
-  setSignedCookie,
-  deleteCookie,
+getCookie,
+getSignedCookie,
+setCookie,
+setSignedCookie,
+deleteCookie,
 } from 'hono/cookie'
 ```
 
-## Usage
+## 使用方法
 
-**NOTE**: Setting and retrieving signed cookies returns a Promise due to the async nature of the WebCrypto API, which is used to create HMAC SHA-256 signatures.
+**注意**: 署名付き Cookie の設定と取得は、HMAC SHA-256 署名の作成に使用される WebCrypto API の非同期性により、Promise を返します。
 
 ```ts
 const app = new Hono()
 
 app.get('/cookie', (c) => {
-  const allCookies = getCookie(c)
-  const yummyCookie = getCookie(c, 'yummy_cookie')
-  // ...
-  setCookie(c, 'delicious_cookie', 'macha')
-  deleteCookie(c, 'delicious_cookie')
-  //
+const allCookies = getCookie(c)
+const yummyCookie = getCookie(c, 'yummy_cookie')
+// ...
+setCookie(c, 'delicious_cookie', 'macha')
+deleteCookie(c, 'delicious_cookie')
+//
 })
 
 app.get('/signed-cookie', async (c) => {
-  const secret = 'secret ingredient'
-  // `getSignedCookie` will return `false` for a specified cookie if the signature was tampered with or is invalid
-  const allSignedCookies = await getSignedCookie(c, secret)
-  const fortuneCookie = await getSignedCookie(
-    c,
-    secret,
-    'fortune_cookie'
-  )
-  // ...
-  const anotherSecret = 'secret chocolate chips'
-  await setSignedCookie(c, 'great_cookie', 'blueberry', anotherSecret)
-  deleteCookie(c, 'great_cookie')
-  //
+const secret = 'secret ingredients'
+// `getSignedCookie` は、署名が改ざんされているか無効である場合、指定された Cookie に対して `false` を返します
+const allSignedCookies = await getSignedCookie(c, secret)
+const fortuneCookie = await getSignedCookie(
+c,
+secret,
+'fortune_cookie'
+)
+// ...
+const anotherSecret = 'secret chocolate tips'
+await setSignedCookie(c, 'great_cookie', 'blueberry', anotherSecret)
+deleteCookie(c, 'great_cookie')
+//
 })
 ```
 
-## Options
+## オプション
 
-### `setCookie` & `setSignedCookie`
+### `setCookie` および `setSignedCookie`
 
 - domain: `string`
 - expires: `Date`
@@ -60,37 +60,37 @@ app.get('/signed-cookie', async (c) => {
 - secure: `boolean`
 - sameSite: `'Strict'` | `'Lax'` | `'None'`
 - prefix: `secure` | `'host'`
-- partitioned: `boolean`
+- パーティション化: `boolean`
 
-Example:
+例:
 
 ```ts
-// Regular cookies
+// 通常のクッキー
 setCookie(c, 'great_cookie', 'banana', {
-  path: '/',
-  secure: true,
-  domain: 'example.com',
-  httpOnly: true,
-  maxAge: 1000,
-  expires: new Date(Date.UTC(2000, 11, 24, 10, 30, 59, 900)),
-  sameSite: 'Strict',
+path: '/',
+secure: true,
+domain: 'example.com',
+httpOnly: true,
+maxAge: 1000,
+expires: new Date(Date.UTC(2000, 11, 24, 10, 30, 59, 900)),
+sameSite: 'Strict',
 })
 
-// Signed cookies
+// 署名付きクッキー
 await setSignedCookie(
-  c,
-  'fortune_cookie',
-  'lots-of-money',
-  'secret ingredient',
-  {
-    path: '/',
-    secure: true,
-    domain: 'example.com',
-    httpOnly: true,
-    maxAge: 1000,
-    expires: new Date(Date.UTC(2000, 11, 24, 10, 30, 59, 900)),
-    sameSite: 'Strict',
-  }
+c,
+'fortune_cookie',
+'lots-of-money',
+'secret ingredients',
+{
+path: '/',
+secure: true,
+domain: 'example.com',
+httpOnly: true,
+maxAge: 1000、
+有効期限: new Date(Date.UTC(2000, 11, 24, 10, 30, 59, 900)),
+sameSite: 'Strict',
+}
 )
 ```
 
@@ -100,80 +100,81 @@ await setSignedCookie(
 - secure: `boolean`
 - domain: `string`
 
-Example:
+例:
 
 ```ts
 deleteCookie(c, 'banana', {
-  path: '/',
-  secure: true,
-  domain: 'example.com',
+path: '/',
+secure: true,
+domain: 'example.com',
 })
 ```
 
-`deleteCookie` returns the deleted value:
+`deleteCookie` は削除された値を返します:
 
 ```ts
-const deletedCookie = deleteCookie(c, 'delicious_cookie')
+const deleteCookie = deleteCookie(c, 'delicious_cookie')
 ```
 
-## `__Secure-` and `__Host-` prefix
+## `__Secure-` および `__Host-` プレフィックス
 
-The Cookie helper supports `__Secure-` and `__Host-` prefix for cookies names.
+Cookie ヘルパーは `__Secure-` およびクッキー名のプレフィックス `__Host-`。
 
-If you want to verify if the cookie name has a prefix, specify the prefix option.
+クッキー名にプレフィックスがあるかどうかを確認する場合は、プレフィックス オプションを指定します。
 
 ```ts
 const securePrefixCookie = getCookie(c, 'yummy_cookie', 'secure')
 const hostPrefixCookie = getCookie(c, 'yummy_cookie', 'host')
 
 const securePrefixSignedCookie = await getSignedCookie(
-  c,
-  secret,
-  'fortune_cookie',
-  'secure'
+c,
+secret,
+'fortune_cookie',
+'secure'
 )
 const hostPrefixSignedCookie = await getSignedCookie(
-  c,
-  secret,
-  'fortune_cookie',
-  'host'
+c,
+secret,
+'fortune_cookie',
+'host'
 )
 ```
 
-Also, if you wish to specify a prefix when setting the cookie, specify a value for the prefix option.
+また、クッキーを設定するときにプレフィックスを指定する場合は、プレフィックス オプションの値を指定します。
 
 ```ts
 setCookie(c, 'delicious_cookie', 'macha', {
-  prefix: 'secure', // or `host`
+prefix: 'secure', // または `host`
 })
 
 await setSignedCookie(
-  c,
-  'delicious_cookie',
-  'macha',
-  'secret choco chips',
-  {
-    prefix: 'secure', // or `host`
-  }
+c,
+'delicious_cookie',
+'macha',
+'secret choco tips',
+{
+prefix: 'secure', // または `host`
+}
 )
 ```
 
-## Following the best practices
+## ベスト プラクティスに従う
 
-A New Cookie RFC (a.k.a cookie-bis) and CHIPS include some best practices for Cookie settings that developers should follow.
+新しい Cookie RFC (別名 cookie-bis) と CHIPS には、開発者が従うべき Cookie 設定のベスト プラクティスがいくつか含まれています。
 
 - [RFC6265bis-13](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-13)
-  - `Max-Age`/`Expires` limitation
-  - `__Host-`/`__Secure-` prefix limitation
+- `Max-Age`/`Expires` 制限
+- `__Host-`/`__Secure-` プレフィックス制限
 - [CHIPS-01](https://www.ietf.org/archive/id/draft-cutler-httpbis-partitioned-cookies-01.html)
-  - `Partitioned` limitation
+- `Partitioned` 制限
 
-Hono is following the best practices.
-The cookie helper will throw an `Error` when parsing cookies under the following conditions:
+Hono はベスト プラクティスに従っています。
 
-- The cookie name starts with `__Secure-`, but `secure` option is not set.
-- The cookie name starts with `__Host-`, but `secure` option is not set.
-- The cookie name starts with `__Host-`, but `path` is not `/`.
-- The cookie name starts with `__Host-`, but `domain` is set.
-- The `maxAge` option value is greater than 400 days.
-- The `expires` option value is 400 days later than the current time.
+Cookie ヘルパーは、次の条件下で Cookie を解析するときに `Error` をスローします:
+
+- Cookie 名が `__Secure-` で始まっているが、`secure` オプションが設定されていない。
+- Cookie 名が `__Host-` で始まっているが、`secure` オプションが設定されていない。
+- クッキー名は `__Host-` で始まりますが、`path` は `/` ではありません。
+- クッキー名は `__Host-` で始まりますが、`domain` が設定されています。
+- `maxAge` オプションの値が 400 日を超えています。
+- `expires` オプションの値が現在の時刻より 400 日後です。

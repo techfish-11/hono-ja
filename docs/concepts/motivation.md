@@ -1,23 +1,29 @@
-# Philosophy
+### 哲学
 
-In this section, we talk about the concept, or philosophy, of Hono.
+このセクションでは、Hono のコンセプト、つまりその哲学について説明します。
 
-## Motivation
+## 動機
 
-At first, I just wanted to create a web application on Cloudflare Workers.
-But, there was no good framework that works on Cloudflare Workers.
-So, I started building Hono.
+最初は、Cloudflare Workers 上で Web アプリケーションを作りたかっただけでした。
 
-I thought it would be a good opportunity to learn how to build a router using Trie trees.
-Then a friend showed up with ultra crazy fast router called "RegExpRouter".
-And I also have a friend who created the Basic authentication middleware.
+しかし、Cloudflare Workers で快適に動作する優れたフレームワークが見つかりませんでした。
 
-Using only Web Standard APIs, we could make it work on Deno and Bun. When people asked "is there Express for Bun?", we could answer, "no, but there is Hono".
-(Although Express works on Bun now.)
+そこで、自分で Hono を作り始めました。
 
-We also have friends who make GraphQL servers, Firebase authentication, and Sentry middleware.
-And, we also have a Node.js adapter.
-An ecosystem has sprung up.
+ちょうど良い機会だったので、trie treeを使ったルーターの構築方法を学ぶことにしました。
 
-In other words, Hono is damn fast, makes a lot of things possible, and works anywhere.
-We might imagine that Hono could become the **Standard for Web Standards**.
+すると友人が、「RegExpRouter」という驚異的に高速なルーターを紹介してくれました。
+
+さらに、別の友人が Basic 認証用のミドルウェアを作成してくれました。
+
+そして、Web 標準 API のみを使用することで、Deno と Bun 上でも動作するフレームワークに仕上げることができました。「Bun で動作する Express はないの？」と聞かれたとき、「いいえ、Hono があります」と胸を張って答えられるようになりました。
+
+（ちなみに現在では、Express も Bun で動作しますが）
+
+その後も、GraphQL サーバー、Firebase 認証、Sentry ミドルウェアを作る友人が現れ、Node.js 向けのアダプターも誕生しました。
+
+こうして、Hono のエコシステムが生まれたのです。
+
+言い換えると、Hono は非常に高速で、多くの可能性を秘め、あらゆる場所で動作します。
+
+Hono が **Web 標準そのもの** になる日も、そう遠くないかもしれません。
